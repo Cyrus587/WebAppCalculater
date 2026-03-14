@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What I Want Calculator</title>
+  <style>
+    :root { --bg:#f8fafc; --card:#fff; --text:#0f172a; --muted:#64748b; --border:#e2e8f0; --accent:#0f172a; --accent-2:#334155; --good:#065f46; --good-bg:#ecfdf5; --danger:#991b1b; --danger-bg:#fef2f2; }
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1100px;margin:0 auto;padding:24px}.title{margin-bottom:18px}.title h1{margin:0 0 6px;font-size:30px;line-height:1.1}.title p{margin:0;color:var(--muted);font-size:14px}
+    .grid{display:grid;gap:18px;grid-template-columns:1.2fr .8fr}.card{background:var(--card);border:1px solid var(--border);border-radius:20px;box-shadow:0 1px 2px rgba(15,23,42,.04);overflow:hidden}.card h2{margin:0;font-size:20px}.card-head{padding:18px 18px 0}.card-body{padding:18px}
+    .inputs{display:grid;gap:14px;grid-template-columns:repeat(2,minmax(0,1fr))}.full{grid-column:1 / -1}label{display:block;font-size:13px;font-weight:600;margin-bottom:7px;color:var(--accent-2)}input,select,textarea,button{font:inherit}input,select,textarea{width:100%;border:1px solid var(--border);border-radius:14px;padding:11px 12px;background:white;color:var(--text)}textarea{min-height:88px;resize:vertical}
+    .row{display:grid;grid-template-columns:.7fr 1fr 1fr;gap:14px}.buttons{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}button{border:1px solid var(--border);border-radius:14px;padding:10px 14px;background:white;cursor:pointer;color:var(--text)}button.primary{background:var(--accent);color:white;border-color:var(--accent)}button:hover{opacity:.95}
+    .result-box{border-radius:18px;background:var(--accent);color:white;padding:18px;margin-bottom:12px}.result-box small{display:block;color:rgba(255,255,255,.7);letter-spacing:.08em;text-transform:uppercase;font-size:11px;margin-bottom:6px}.answer{font-size:28px;font-weight:700;line-height:1.2}.detail{border:1px solid var(--border);background:white;border-radius:18px;padding:14px;color:var(--muted);font-size:14px}.save-note{margin-top:12px;font-size:13px;color:var(--muted)}
+    .saved{margin-top:18px}.saved-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}.saved-list{display:grid;gap:10px}.saved-item{border:1px solid var(--border);border-radius:16px;background:white;padding:12px}.saved-item-top{display:flex;justify-content:space-between;gap:12px;margin-bottom:8px}.saved-item strong{display:block;margin-bottom:3px}.meta{color:var(--muted);font-size:12px;line-height:1.5}.mini-buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .status{margin-top:10px;padding:10px 12px;border-radius:14px;font-size:13px;display:none}.status.show{display:block}.status.good{background:var(--good-bg);color:var(--good)}.status.bad{background:var(--danger-bg);color:var(--danger)}.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;word-break:break-all;color:var(--muted);margin-top:8px;white-space:pre-wrap}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}.inputs,.row{grid-template-columns:1fr}.wrap{padding:14px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="title">
+      <h1>What I Want Calculator</h1>
+      <p>Use it like a mini solver, save calculations on your phone, and copy the values into Google Forms later.</p>
+    </div>
+    <div class="grid">
+      <section class="card">
+        <div class="card-head"><h2>Calculator</h2></div>
+        <div class="card-body">
+          <div class="inputs">
+            <div><label for="item">Item label</label><input id="item" placeholder="Shoes, tattoo, headphones..." /></div>
+            <div><label for="solveFor">Solve for</label><select id="solveFor"><option value="time">Time to reach</option><option value="rateDollar">Dollar rate needed</option><option value="ratePercent">Percent rate needed</option><option value="price">Reachable price</option></select></div>
+            <div><label for="price">Price</label><input id="price" type="number" step="any" value="245.65" /></div>
+            <div><label for="rateDollar">Rate in dollars</label><input id="rateDollar" type="number" step="any" value="14.74" /></div>
+            <div><label for="ratePercent">Rate in percent</label><input id="ratePercent" type="number" step="any" placeholder="Optional" /></div>
+            <div class="full row">
+              <div><label for="periodAmount">Period amount</label><input id="periodAmount" type="number" step="any" value="1" /></div>
+              <div><label for="periodUnit">Earning period</label><select id="periodUnit"><option value="day">day</option><option value="week">week</option><option value="month">month</option><option value="year">year</option></select></div>
+              <div><label for="showUnit">Show result in</label><select id="showUnit"><option value="day">day</option><option value="week">week</option><option value="month" selected>month</option><option value="year">year</option></select></div>
+            </div>
+            <div class="full"><label for="notes">Notes (optional)</label><textarea id="notes" placeholder="Anything you want to remember when you save this..."></textarea></div>
+          </div>
+          <div class="buttons"><button class="primary" id="saveBtn">Save calculation</button><button id="copyBtn">Copy summary</button><button id="formBtn">Copy values for Form</button><button id="resetBtn">Reset</button></div>
+          <div id="status" class="status"></div>
+          <div class="save-note">Saved calculations stay on this device using your browser storage.</div>
+        </div>
+      </section>
+      <section class="card">
+        <div class="card-head"><h2>Result</h2></div>
+        <div class="card-body"><div class="result-box"><small>Answer</small><div class="answer" id="answer">—</div></div><div class="detail" id="detail">Fill in the calculator to see the result.</div><div class="code" id="formPreview"></div></div>
+      </section>
+    </div>
+    <section class="saved"><div class="saved-head"><h2>Saved calculations</h2><div class="buttons" style="margin-top:0"><button id="exportBtn">Export JSON</button><button id="clearBtn">Clear saved</button></div></div><div id="savedList" class="saved-list"></div></section>
+  </div>
+  <script>
+    const UNIT_TO_DAYS={day:1,week:7,month:30.44,year:365.25},STORAGE_KEY="what_i_want_saved_calculations";
+    const els={item:document.getElementById("item"),solveFor:document.getElementById("solveFor"),price:document.getElementById("price"),rateDollar:document.getElementById("rateDollar"),ratePercent:document.getElementById("ratePercent"),periodAmount:document.getElementById("periodAmount"),periodUnit:document.getElementById("periodUnit"),showUnit:document.getElementById("showUnit"),notes:document.getElementById("notes"),answer:document.getElementById("answer"),detail:document.getElementById("detail"),formPreview:document.getElementById("formPreview"),status:document.getElementById("status"),savedList:document.getElementById("savedList"),saveBtn:document.getElementById("saveBtn"),copyBtn:document.getElementById("copyBtn"),formBtn:document.getElementById("formBtn"),resetBtn:document.getElementById("resetBtn"),exportBtn:document.getElementById("exportBtn"),clearBtn:document.getElementById("clearBtn")};
+    const n=v=>{const num=Number(v);return Number.isFinite(num)?num:NaN};
+    const fmtNum=(v,d=2)=>Number.isFinite(v)?new Intl.NumberFormat("en-US",{maximumFractionDigits:d}).format(v):"—";
+    const fmtMoney=v=>Number.isFinite(v)?new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:2}).format(v):"—";
+    const fmtPct=v=>Number.isFinite(v)?`${fmtNum(v,2)}%`:"—";
+    const unitLabel=(u,a)=>`${u}${Number(a)===1?"":"s"}`;
+    function getState(){return{item:els.item.value.trim(),solveFor:els.solveFor.value,price:els.price.value,rateDollar:els.rateDollar.value,ratePercent:els.ratePercent.value,periodAmount:els.periodAmount.value,periodUnit:els.periodUnit.value,showUnit:els.showUnit.value,notes:els.notes.value.trim()}}
+    function calculate(s){const price=n(s.price),rateDollar=n(s.rateDollar),ratePercent=n(s.ratePercent),periodAmount=n(s.periodAmount),periodDays=periodAmount*UNIT_TO_DAYS[s.periodUnit],showDays=UNIT_TO_DAYS[s.showUnit];if(!Number.isFinite(periodAmount)||periodAmount<=0)return{answer:"Enter a valid period amount.",detail:"The calculator needs a positive amount of time for the earning period.",values:null};if(s.solveFor==="time"){if(!Number.isFinite(price)||price<=0||!Number.isFinite(rateDollar)||rateDollar<=0)return{answer:"Enter a valid price and dollar rate.",detail:"Example: price 245.65 and rate 14.74 per day.",values:null};const days=price/rateDollar*periodDays,shown=days/showDays;return{answer:`${fmtNum(shown,2)} ${unitLabel(s.showUnit,shown)}`,detail:`${fmtMoney(price)} at ${fmtMoney(rateDollar)} every ${fmtNum(periodAmount)} ${unitLabel(s.periodUnit,periodAmount)} takes about ${fmtNum(days,2)} days.`,values:{price,rateDollar,ratePercent:"",periodAmount,periodUnit:s.periodUnit,showUnit:s.showUnit,result:shown,resultLabel:unitLabel(s.showUnit,shown)}}}if(s.solveFor==="rateDollar"){if(!Number.isFinite(price)||price<=0)return{answer:"Enter a valid price.",detail:"A positive price is required.",values:null};const targetDays=periodAmount*showDays,needed=price/(targetDays/UNIT_TO_DAYS[s.periodUnit]);return{answer:`${fmtMoney(needed)} per ${s.periodUnit}`,detail:`To reach ${fmtMoney(price)} in ${fmtNum(periodAmount)} ${unitLabel(s.showUnit,periodAmount)}, you need ${fmtMoney(needed)} every ${s.periodUnit}.`,values:{price,rateDollar:needed,ratePercent:"",periodAmount,periodUnit:s.periodUnit,showUnit:s.showUnit,result:needed,resultLabel:`per ${s.periodUnit}`}}}if(s.solveFor==="ratePercent"){if(!Number.isFinite(price)||price<=0)return{answer:"Enter a valid price.",detail:"A positive price is required.",values:null};const targetDays=periodAmount*showDays,neededDollar=price/(targetDays/UNIT_TO_DAYS[s.periodUnit]),neededPercent=neededDollar/price*100;return{answer:`${fmtPct(neededPercent)} per ${s.periodUnit}`,detail:`That equals ${fmtMoney(neededDollar)} every ${s.periodUnit} on a price of ${fmtMoney(price)}.`,values:{price,rateDollar:neededDollar,ratePercent:neededPercent,periodAmount,periodUnit:s.periodUnit,showUnit:s.showUnit,result:neededPercent,resultLabel:`per ${s.periodUnit}`}}}if(!Number.isFinite(price)||price<=0||!Number.isFinite(ratePercent)||ratePercent<=0)return{answer:"Enter a valid price and percent rate.",detail:"Example: 245.65 and 5%.",values:null};const targetDays=periodAmount*showDays,rateDollarFromPercent=price*(ratePercent/100),reachable=rateDollarFromPercent*(targetDays/UNIT_TO_DAYS[s.periodUnit]);return{answer:fmtMoney(reachable),detail:`${fmtPct(ratePercent)} of ${fmtMoney(price)} every ${s.periodUnit} reaches about ${fmtMoney(reachable)} over ${fmtNum(periodAmount)} ${unitLabel(s.showUnit,periodAmount)}.`,values:{price:reachable,rateDollar:rateDollarFromPercent,ratePercent,periodAmount,periodUnit:s.periodUnit,showUnit:s.showUnit,result:reachable,resultLabel:"price"}}}
+    function buildFormCopy(s,c){if(!c.values)return"";return[`Item: ${s.item||""}`,`Price: ${Number.isFinite(c.values.price)?c.values.price:""}`,`Rate in $: ${Number.isFinite(c.values.rateDollar)?c.values.rateDollar:""}`,`Rate %: ${c.values.ratePercent===""?"":c.values.ratePercent}`,`Period Amount: ${c.values.periodAmount??""}`,`Period Unit: ${c.values.periodUnit||""}`,`Show Result In: ${c.values.showUnit||""}`,`Solve For: ${s.solveFor}`,`Answer: ${c.resultText||""}`,`Notes: ${s.notes||""}`].join("\n")}
+    function showStatus(msg,type="good"){els.status.textContent=msg;els.status.className=`status show ${type}`;setTimeout(()=>els.status.className="status",2400)}
+    function loadSaved(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]")}catch{return[]}}
+    function saveSaved(items){localStorage.setItem(STORAGE_KEY,JSON.stringify(items))}
+    function renderSaved(){const items=loadSaved();els.savedList.innerHTML="";if(!items.length){els.savedList.innerHTML='<div class="saved-item"><div class="meta">No saved calculations yet.</div></div>';return;}items.forEach((item,index)=>{const div=document.createElement("div");div.className="saved-item";div.innerHTML=`<div class="saved-item-top"><div><strong>${item.item||"Unnamed calculation"}</strong><div class="meta">${item.answer}</div></div><div class="meta">${new Date(item.savedAt).toLocaleString()}</div></div><div class="meta">Solve for: ${item.solveFor}</div><div class="meta">Price: ${item.price||""} · Rate $: ${item.rateDollar||""} · Rate %: ${item.ratePercent||""}</div><div class="meta">Period: ${item.periodAmount||""} ${item.periodUnit||""} · Show in: ${item.showUnit||""}</div>${item.notes?`<div class="meta">Notes: ${item.notes}</div>`:""}<div class="mini-buttons"><button data-action="load" data-index="${index}">Load</button><button data-action="copy" data-index="${index}">Copy</button><button data-action="delete" data-index="${index}">Delete</button></div>`;els.savedList.appendChild(div)})}
+    function update(){const state=getState(),calc=calculate(state);calc.resultText=calc.answer;els.answer.textContent=calc.answer;els.detail.textContent=calc.detail;els.formPreview.textContent=buildFormCopy(state,calc);return{state,calc}}
+    function copyText(text){navigator.clipboard.writeText(text).then(()=>showStatus("Copied."),()=>showStatus("Copy failed.","bad"))}
+    [els.item,els.solveFor,els.price,els.rateDollar,els.ratePercent,els.periodAmount,els.periodUnit,els.showUnit,els.notes].forEach(el=>el.addEventListener("input",update));[els.solveFor,els.periodUnit,els.showUnit].forEach(el=>el.addEventListener("change",update));
+    els.saveBtn.addEventListener("click",()=>{const {state,calc}=update();const items=loadSaved();items.unshift({...state,answer:calc.answer,savedAt:Date.now()});saveSaved(items);renderSaved();showStatus("Calculation saved.")});
+    els.copyBtn.addEventListener("click",()=>{const {calc}=update();copyText(calc.answer+"\n"+els.detail.textContent)});
+    els.formBtn.addEventListener("click",()=>{const {state,calc}=update();copyText(buildFormCopy(state,calc))});
+    els.resetBtn.addEventListener("click",()=>{els.item.value="";els.solveFor.value="time";els.price.value="245.65";els.rateDollar.value="14.74";els.ratePercent.value="";els.periodAmount.value="1";els.periodUnit.value="day";els.showUnit.value="month";els.notes.value="";update();showStatus("Calculator reset.")});
+    els.exportBtn.addEventListener("click",()=>{const blob=new Blob([JSON.stringify(loadSaved(),null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="what_i_want_calculations.json";a.click();URL.revokeObjectURL(url)});
+    els.clearBtn.addEventListener("click",()=>{if(!confirm("Clear all saved calculations on this device?"))return;saveSaved([]);renderSaved();showStatus("Saved calculations cleared.")});
+    els.savedList.addEventListener("click",e=>{const btn=e.target.closest("button[data-action]");if(!btn)return;const items=loadSaved(),index=Number(btn.dataset.index),item=items[index];if(!item)return;if(btn.dataset.action==="load"){els.item.value=item.item||"";els.solveFor.value=item.solveFor||"time";els.price.value=item.price||"";els.rateDollar.value=item.rateDollar||"";els.ratePercent.value=item.ratePercent||"";els.periodAmount.value=item.periodAmount||"1";els.periodUnit.value=item.periodUnit||"day";els.showUnit.value=item.showUnit||"month";els.notes.value=item.notes||"";update();showStatus("Loaded saved calculation.")}if(btn.dataset.action==="copy"){copyText([`Item: ${item.item||""}`,`Price: ${item.price||""}`,`Rate in $: ${item.rateDollar||""}`,`Rate %: ${item.ratePercent||""}`,`Period Amount: ${item.periodAmount||""}`,`Period Unit: ${item.periodUnit||""}`,`Show Result In: ${item.showUnit||""}`,`Solve For: ${item.solveFor||""}`,`Answer: ${item.answer||""}`,`Notes: ${item.notes||""}`].join("\n"))}if(btn.dataset.action==="delete"){items.splice(index,1);saveSaved(items);renderSaved();showStatus("Deleted saved calculation.")}});
+    update();renderSaved();
+  </script>
+</body>
+</html>
